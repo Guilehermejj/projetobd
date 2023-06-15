@@ -2,6 +2,7 @@ package com.example.projetobd;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -80,7 +81,40 @@ public class AcessoBD extends SQLiteOpenHelper {
         //String queryStatement = "SELECT * FROM TABELA_USUARIO";
         String queryStatement = "SELECT * FROM " + TABELA_USUARIO;//Considere a linha acima para visualizar a sentença como ela é na prática.
 
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();//Readable para operações de Select. Fechar após uso.
+
+        //O retorno Cursor serve para receber o resultado do banco e navegar entre os resultados. Fechar após uso.
+        //selectionArgs é usado para preencher os parâmetros da SQL para os campus da cláusula WHERE
+        try (Cursor cursor = db.rawQuery(queryStatement, null)) {
+            //Exemplo com selectionArgs ->
+            // rawQuery("SELECT ID, USUARIO_NOME, USUARIO_IDADE FROM TABELA_USUARIO WHERE id = ? AND USUARIO_NOME = ? AND USUARIO_IDADE = ?", new String[] {"1", "David", "2"});
+            //rawQuery("SELECT ID, USUARIO_NOME, USUARIO_IDADE FROM TABELA_USUARIO WHERE id = 1 AND USUARIO_NOME = David AND USUARIO_IDADE = 2",null);
+            if (cursor.moveToFirst()) {//moveToFirst retorna true no caso de haver registro(s( proveniente(s) da consulta. Posiciona cursor no primeiro resultado
+                //do/while Percorrer o cursor para instanciar objetos da classe Usuario.
+                do {
+                    int usuarioCod = cursor.getInt(0);//A primeira coluna da tabela usuário é código
+                    String usuarioNome = cursor.getString(1);
+                    String usuarioEmail = cursor.getString(2);
+                    //int usuarioIdade = cursor.getInt(cursor.getColumnIndex("idade"));
+                    //String dataNascimentoUsuario = cursor.getString(3);
+                    //Não há cursor.getBoolean. Precisa converter um int para boolean. Pode ser feito com cast, SE/ENTÃO ou operador ternário
+
+                    Usuario usuario = new Usuario(usuarioCod, usuarioNome, usuarioEmail);//Sempre confira a ordem do construtor
+                    listaUsuarios.add(usuario);//Adiciona o objeto usuário a lista.
+                } while (cursor.moveToNext());//Enquanto houver um próximo registro (moveToNext)
+            } else {
+                //A lista está vazia por falta de registro no banco de dados.
+            }
+
+            //fechar cursor e base de dados. Com isso, permite que outras pessoas/processos possam utilizar.
+
+            cursor.close();
+        }
+        db.close();//Fechar o banco de dados para liberar memória e permitir que outros processos assumam a prioridade de consulta de maneira mais rápida
+
+        return listaUsuarios; //retorna a lista com os usuários encontrados no banco de dados
     }
-}
+    }
+
+
 
