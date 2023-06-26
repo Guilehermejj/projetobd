@@ -1,5 +1,7 @@
 package com.example.projetobd;
 
+import static androidx.collection.ArraySet.INT;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -18,6 +20,9 @@ public class AcessoBD extends SQLiteOpenHelper {
     protected static final String USUARIO_NOME = "USUARIO_NOME";
     protected static final String USUARIO_EMAIL = "USUARIO_EMAIL";
 
+    protected static final String USUARIO_NUMERO = "USUARIO_NUMERO";
+
+
     public AcessoBD(@Nullable Context context) {
         super(context, "ClienteBD", null, 1);
     }
@@ -26,7 +31,7 @@ public class AcessoBD extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String statement = "CREATE TABLE " + TABELA_USUARIO +
                 " (" + USUARIO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + USUARIO_NOME + " TEXT, " + USUARIO_EMAIL + " TEXT)";
+                + USUARIO_NOME + " TEXT, " + USUARIO_EMAIL + " TEXT, " + USUARIO_NUMERO + " INT)";
 
 
         db.execSQL(statement);
@@ -45,6 +50,7 @@ public class AcessoBD extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(USUARIO_NOME, usuario.getNomeUsuario());//coluna nome e valor
         contentValues.put(USUARIO_EMAIL, usuario.getEmailUsuario());//coluna email e valor
+        contentValues.put(USUARIO_NUMERO, usuario.getNumeroUsuario());
         //Por quê não tem o ID aqui? Porque o ID é tem incremento automático (AUTOINCREMENT). Veja a linha "CREATE TABLE..." dentro do método onCreate.
 
         //nullColumnHack é null quando deseja-se adicionar uma linha não nula. Quando intencionalmente deseja inserir uma linha vazia, é necessário informar o valor de uma coluna da tabela usada. No caso da tabela usuário, pode ser nome ou idade.
@@ -65,6 +71,8 @@ public class AcessoBD extends SQLiteOpenHelper {
         contentValues.put(USUARIO_NOME, usuario.getNomeUsuario());
         contentValues.put(USUARIO_EMAIL, usuario.getEmailUsuario());
         contentValues.put(USUARIO_ID, usuario.getIdUsuario());
+        contentValues.put(USUARIO_NUMERO, usuario.getNumeroUsuario());
+
         //Por quê não tem o ID aqui? Porque o ID é tem incremento automático (AUTOINCREMENT). Veja a linha "CREATE TABLE..." dentro do método onCreate.
 
         long atualizarSucedido = db.update(TABELA_USUARIO, contentValues, USUARIO_ID + "=" + usuario.getIdUsuario(), null);//nullColumnHack é null quando deseja-se adicionar uma linha não nula. Quando intencionalmente deseja inserir uma linha vazia, é necessário informar o valor de uma coluna da tabela usada. No caso da tabela usuário, pode ser nome ou idade.
@@ -95,11 +103,13 @@ public class AcessoBD extends SQLiteOpenHelper {
                     int usuarioCod = cursor.getInt(0);//A primeira coluna da tabela usuário é código
                     String usuarioNome = cursor.getString(1);
                     String usuarioEmail = cursor.getString(2);
+                    int usuarioNumero = cursor.getInt(3);
+
                     //int usuarioIdade = cursor.getInt(cursor.getColumnIndex("idade"));
                     //String dataNascimentoUsuario = cursor.getString(3);
                     //Não há cursor.getBoolean. Precisa converter um int para boolean. Pode ser feito com cast, SE/ENTÃO ou operador ternário
 
-                    Usuario usuario = new Usuario(usuarioCod, usuarioNome, usuarioEmail);//Sempre confira a ordem do construtor
+                    Usuario usuario = new Usuario(usuarioCod, usuarioNome, usuarioEmail, usuarioNumero );//Sempre confira a ordem do construtor
                     listaUsuarios.add(usuario);//Adiciona o objeto usuário a lista.
                 } while (cursor.moveToNext());//Enquanto houver um próximo registro (moveToNext)
             } else {
