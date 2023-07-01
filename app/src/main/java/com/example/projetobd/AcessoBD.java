@@ -1,7 +1,5 @@
 package com.example.projetobd;
 
-import static androidx.collection.ArraySet.INT;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -100,7 +98,7 @@ public class AcessoBD extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {//moveToFirst retorna true no caso de haver registro(s( proveniente(s) da consulta. Posiciona cursor no primeiro resultado
                 //do/while Percorrer o cursor para instanciar objetos da classe Usuario.
                 do {
-                    int usuarioCod = cursor.getInt(0);//A primeira coluna da tabela usuário é código
+                    int usuarioId = cursor.getInt(0);
                     String usuarioNome = cursor.getString(1);
                     String usuarioEmail = cursor.getString(2);
                     int usuarioNumero = cursor.getInt(3);
@@ -109,7 +107,7 @@ public class AcessoBD extends SQLiteOpenHelper {
                     //String dataNascimentoUsuario = cursor.getString(3);
                     //Não há cursor.getBoolean. Precisa converter um int para boolean. Pode ser feito com cast, SE/ENTÃO ou operador ternário
 
-                    Usuario usuario = new Usuario(usuarioCod, usuarioNome, usuarioEmail, usuarioNumero );//Sempre confira a ordem do construtor
+                    Usuario usuario = new Usuario(usuarioId, usuarioNome, usuarioEmail, usuarioNumero);//Sempre confira a ordem do construtor
                     listaUsuarios.add(usuario);//Adiciona o objeto usuário a lista.
                 } while (cursor.moveToNext());//Enquanto houver um próximo registro (moveToNext)
             } else {
@@ -124,7 +122,36 @@ public class AcessoBD extends SQLiteOpenHelper {
 
         return listaUsuarios; //retorna a lista com os usuários encontrados no banco de dados
     }
+    /*public boolean excluirUsuario(Usuario usuario) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String queryString =
+                "DELETE FROM " + TABELA_USUARIO + " WHERE " + USUARIO_ID + " = " + usuario.getIdUsuario();
+
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        if (cursor.moveToFirst()) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }*/
+    public boolean excluirUsuario(Usuario usuario) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String whereClause = USUARIO_ID + " = ?";
+        String[] whereArgs = {String.valueOf(usuario.getIdUsuario())};
+
+        int linhasAfetadas = db.delete(TABELA_USUARIO, whereClause, whereArgs);
+
+        db.close();
+
+        return linhasAfetadas > 0;
     }
+
+}
+
 
 
 

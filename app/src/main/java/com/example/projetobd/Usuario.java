@@ -12,15 +12,22 @@ public class Usuario {
 
     }
 
-    public Usuario(String nomeUsuario, String emailUsuario int numeroUsuario) {
+    public Usuario(String nomeUsuario, String emailUsuario, int numeroUsuario) {
         this.nomeUsuario = nomeUsuario;
-        this.emailUsuario = emailUsuario
+        this.emailUsuario = emailUsuario;
         this.numeroUsuario = numeroUsuario;
     }
 
+
+
     @Override
     public String toString() {
-        return "Usuario{" + "idUsuario=" + idUsuario + ", nomeUsuario='" + nomeUsuario + '\'' + ", NumeroUsuario=" + numeroUsuario + '}';
+        return "Usuario{" +
+                "idUsuario=" + idUsuario +
+                ", emailUsuario='" + emailUsuario + "'" + // Adiciona as aspas de fechamento corretamente
+                ", nomeUsuario='" + nomeUsuario + '\'' +
+                ", numeroUsuario=" + numeroUsuario +
+                '}';
         //"Usuario{idUsuario=1, nomeUsuario=Ronan, idadeUsuario=30}"
     }
     private int idUsuario;

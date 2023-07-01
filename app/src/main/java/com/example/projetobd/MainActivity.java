@@ -16,6 +16,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     Button cadasbt;
     AcessoBD acessoBD;
+    Button bAtualizarUsuario;
 
     ListView lvUsuarios;
 
@@ -26,24 +27,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         cadasbt = findViewById(R.id.button);
+        bAtualizarUsuario = findViewById(R.id.button2);
         lvUsuarios = findViewById(R.id.listview);
         EditText nametxt = (EditText) findViewById(R.id.ntxt);
         EditText emailtxt = (EditText) findViewById(R.id.etxt);
         EditText numbertxt = (EditText) findViewById(R.id.number);;
-
 
         acessoBD = new AcessoBD(MainActivity.this);
         mostrarUsuariosNaListView(acessoBD);
 
         cadasbt.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 Usuario usuario = null;
 
     try {
         usuario = new Usuario(-1,
-                nametxt.getText().toString();
-            emailtxt.getText().toString();
+                nametxt.getText().toString(),
+            emailtxt.getText().toString(),
         Integer.parseInt(numbertxt.getText().toString()));
 
         boolean sucesso = acessoBD.adicionarUsuario(usuario);
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        bListaUsuarios.setOnClickListener(new View.OnClickListener() {
+        /*bListaUsuarios.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //aqui acontece a ação
@@ -76,13 +77,13 @@ public class MainActivity extends AppCompatActivity {
                     //Também adicionar a variável aqui em MainActivity e associar ela ao componente com findViewById.
                     lvUsuarios.setAdapter(usuarioArrayAdapter);*/
 
-                mostrarUsuariosNaListView(acessoBD);
+                /*mostrarUsuariosNaListView(acessoBD);
 
                 Toast.makeText(MainActivity.this, "Lista de usuários preenchida com sucesso", Toast.LENGTH_SHORT).show();
 
 
             }
-        });
+        });*/
 
 
         /**
@@ -100,6 +101,16 @@ public class MainActivity extends AppCompatActivity {
 
                 Toast.makeText(MainActivity.this, "Usuário excluído(" + excluiu + "):" + usuarioClicado.toString(), Toast.LENGTH_SHORT).show();
 
+                /*Usuario usuarioClicado = (Usuario) parent.getItemAtPosition(position);
+                boolean excluiu = acessoBD.excluirUsuario(usuarioClicado);
+
+                if (excluiu) {
+                    Toast.makeText(MainActivity.this, "Usuário excluído: " + usuarioClicado.toString(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Falha ao excluir usuário", Toast.LENGTH_SHORT).show();
+                }
+
+                mostrarUsuariosNaListView(acessoBD);*/
 
             }
         });
@@ -115,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //Bloco try para "tentar" executar as ações esperadas. O catch é para "remediar" ou "avisar" algo que não foi realizado no bloco try como esperado.
                 try {
-                    usuario = new Usuario(Integer.parseInt(etCodigoUsuario.getText().toString()), etNomeUsuario.getText().toString(), Integer.parseInt(etIdadeUsuario.getText().toString()));
+                    usuario = new Usuario (nametxt.getText().toString(), emailtxt.getText().toString(), Integer.parseInt(numbertxt.getText().toString()));
 
                     boolean sucesso = acessoBD.atualizarUsuario(usuario);
 
@@ -123,10 +134,10 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Sucesso:" + sucesso, Toast.LENGTH_SHORT).show();
 
                 } catch (NumberFormatException e) {
-                    Toast.makeText(MainActivity.this, "Erro na conversão de uma String para int: Idade não corresponde a número!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Erro na conversão de uma String para int: numero não corresponde a número!", Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
                     Toast.makeText(MainActivity.this, "Erro na criação do usuário!", Toast.LENGTH_LONG).show();
-                    usuario = new Usuario(-1, "erro", 0);
+                    usuario = new Usuario("erro", "erro", 0);
                 }
 
             }
@@ -140,26 +151,6 @@ public class MainActivity extends AppCompatActivity {
                     android.R.layout.simple_list_item_1, acessoBD.getListaUsuarios());//Dentro de <> está o tipo de objeto que será adicionado na lista
             lvUsuarios.setAdapter(usuarioArrayAdapter);
         }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
             }
 
